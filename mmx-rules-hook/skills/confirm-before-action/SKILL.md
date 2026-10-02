@@ -1,207 +1,88 @@
 ---
-keywords: [confirmation, rules, safety, approval, risky-action, destructive, secrets, admin]
+keywords: [confirmation, approval, safety, risky-action, destructive, secrets, verification, proof]
 match: any
 ---
 
 # Confirm Before Action
 
-Enforce mandatory safety rules before risky agent actions. Require explicit acknowledgment and confirmation.
+Before any risky or security-relevant action, require explicit acknowledgment of the applicable MMX rules and stop until the user confirms.
 
 ## Mission
 
-Before any action that could affect security, data integrity, or project state, identify the risk and show the applicable rules. Only proceed after explicit user confirmation.
+This skill enforces the rules in the MMX governance set before the agent performs operations that could affect security, data integrity, or project state.
 
-## Mandatory Rules
+## Mandatory rules
 
-These rules apply to all risky actions:
+1. Never expose secrets in source, logs, reports or browser state.
+2. Admin APIs require explicit authentication and permission checks.
+3. Destructive operations require explicit approval.
+4. Use least privilege.
+5. Reality before assumption.
+6. Cause before symptom.
+7. Proof before claim.
+8. No fake done.
+9. Security and data integrity before convenience.
 
-1. **Never expose secrets** in source, logs, reports or browser state.
-   - Applies to: file writes, external requests, shell commands, git operations
-   - If the action would output secrets or store them unencrypted → block and warn
+## Required behavior
 
-2. **Admin APIs require explicit authentication and permission checks.**
-   - Applies to: admin API calls, privileged operations
-   - Verify credentials and scope before proceeding
+### 1. Detect the action
 
-3. **Destructive operations require explicit approval.**
-   - Applies to: file deletes, git force-push, SQL drops, cache clears, state mutations
-   - Show what will be deleted/changed and why
-   - Require confirmation phrase: "I confirm"
+Classify the action before it runs:
+- shell execution
+- file writes or deletes
+- git operations such as push / force-push / clean
+- admin or privileged API calls
+- external network requests
+- data mutation or destructive changes
 
-4. **Use least privilege.**
-   - Applies to: admin calls, shell execution, file operations
-   - Use minimal permissions and scope necessary
-   - Avoid overly broad patterns or wildcards
+### 2. Detect the risk
 
-5. **Reality before assumption.**
-   - Applies to: file writes, shell execution
-   - Check actual state before making changes
-   - Do not invent files, tests, results, or success
-   - Verify the project exists in the actual state
+Mark the action as:
+- Critical: secret exposure, admin privilege changes, destructive operations, network calls with sensitive data
+- High: file deletion, git force operations, broad shell execution, broad writes or resets
+- Medium: less destructive but still state-changing actions
 
-6. **Cause before symptom.**
-   - Applies to: all actions
-   - Understand root cause, not just surface symptoms
-   - Make targeted fixes, not blanket changes
+### 3. Show the applicable rules
 
-7. **Proof before claim.**
-   - Applies to: shell execution, tests, build, git operations
-   - Verify results with actual output
-   - Do not assume success; run verification
+Display a short approval prompt with:
+- action summary
+- risk level
+- relevant rules
+- explicit confirmation phrase
 
-8. **No fake done.**
-   - Applies to: all actions
-   - Completion without sufficient verification is not a real result
-   - Incomplete work or unverified changes are not acceptable
+### 4. Require explicit confirmation
 
-9. **Security and data integrity before convenience.**
-   - Applies to: file deletes, force-push, admin calls, external requests
-   - Never skip safety checks for speed
-   - Do not allow "move fast and break things" approach
+The user must type exactly:
 
-## Behavior
+I confirm
 
-### Before Action Execution
+If the user does not confirm, the action is blocked.
 
-1. **Identify** the intended action (shell command, file operation, git command, API call, etc.).
-2. **Classify** the risk level:
-   - **Critical**: secrets exposure, destructive without backups, admin operations, external calls with sensitive data
-   - **High**: file deletes, force-push, unverified shell, permission changes
-   - **Medium**: file writes, git operations, local builds
-3. **Map** applicable rules from the mandatory list above.
-4. **Display** the confirmation prompt:
-   ```
-   ⚠️  Risky Action Requires Confirmation
-   
-   Action: [description of what will happen]
-   Risk Level: [critical|high|medium]
-   
-   Applicable Rules:
-   - [Rule 1]
-   - [Rule 2]
-   - [Rule N]
-   
-   To proceed, type: I confirm
-   To cancel: (Ctrl+C or no response)
-   ```
-5. **Wait** for explicit user confirmation with phrase "I confirm".
-6. **If confirmed**: proceed with the action once.
-7. **If denied or timeout**: stop immediately, do not execute.
+### 5. Verify after execution
 
-### After Action Execution
+After the action runs, verify actual output before reporting success. If output is unclear or missing, report the result as unverified and do not claim completion.
 
-1. **Verify** the actual result with real output.
-2. **Compare** claimed result with actual result.
-3. **Document** what was changed and proof (logs, file diffs, test output).
-4. **Report** completion only if verification passed.
+## Confirmation template
 
-## Examples
+```text
+⚠️ MMX confirmation gate
 
-### Example 1: File Delete (Destructive)
+Action: <what the agent is about to do>
+Risk: <critical | high | medium>
 
-```
-⚠️  Risky Action Requires Confirmation
-
-Action: Delete files matching 'temp/**/*.log' (12 files, ~50MB)
-Risk Level: HIGH
-
-Applicable Rules:
-- Destructive operations require explicit approval.
-- Use least privilege.
-- Proof before claim.
-
-Files to delete:
-  temp/logs/app.2026-10-01.log (15MB)
-  temp/logs/app.2026-10-02.log (18MB)
-  temp/logs/system.log (17MB)
-  [9 more files]
+Applicable rules:
+- <rule 1>
+- <rule 2>
+- <rule 3>
 
 To proceed, type: I confirm
+To cancel: stop and do not run the action.
 ```
 
-### Example 2: Shell Command (Unverified)
+## Non-negotiable requirements
 
-```
-⚠️  Risky Action Requires Confirmation
-
-Action: Execute shell: npm run build && npm test
-Risk Level: HIGH
-
-Applicable Rules:
-- Reality before assumption.
-- Proof before claim.
-- No fake done.
-
-This command will:
-1. Build the project (output will be verified)
-2. Run all tests (results must pass)
-
-To proceed, type: I confirm
-```
-
-### Example 3: Admin API Call
-
-```
-⚠️  Risky Action Requires Confirmation
-
-Action: Update user permissions via admin API (grant admin role to user_id=42)
-Risk Level: CRITICAL
-
-Applicable Rules:
-- Admin APIs require explicit authentication and permission checks.
-- Use least privilege.
-- Security and data integrity before convenience.
-
-Verify:
-- Your authentication token has admin scope: ✓
-- User ID 42 is correct: [you must verify]
-- You intend to grant admin role: [confirm]
-
-To proceed, type: I confirm
-```
-
-### Example 4: Secrets in Output (Blocked)
-
-```
-⚠️  Risky Action BLOCKED
-
-Action: Upload log to external service
-Reason: Log contains secrets (API keys, tokens)
-
-Applicable Rule:
-- Never expose secrets in source, logs, reports or browser state.
-
-This action has been BLOCKED to prevent secret exposure.
-To proceed safely:
-1. Redact secrets from the log
-2. Use a secure, authenticated channel
-3. Verify encryption in transit and at rest
-```
-
-## Integration Points
-
-### Hook Events
-
-- `before_tool_call`: Intercept shell, file_write, file_delete, git_push, admin_api_call, external_request
-- `after_tool_call`: Verify result against stated intent
-
-### User Confirmation
-
-- Phrase: "I confirm"
-- Must be explicit and intentional
-- Timeout: 5 minutes
-- No auto-retry or workarounds
-
-### Logging
-
-- Log all risky actions and confirmations
-- Include user response, timestamp, action details
-- Keep audit trail for compliance
-
-## Non-Negotiable
-
-- **Never** proceed without explicit confirmation for critical/high-risk actions.
-- **Never** hide rules or make them optional.
-- **Never** allow "proceed anyway" without user typing the exact phrase.
-- **Never** assume verification passed; check actual output.
-- **Never** skip safety checks for convenience or speed.
+- Never proceed silently on risky actions.
+- Never hide applicable rules.
+- Never allow a critical or high-risk action without explicit confirmation.
+- Never report success without proof from actual output.
+- Never skip safety checks for speed or convenience.

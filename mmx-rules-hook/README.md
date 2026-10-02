@@ -1,146 +1,103 @@
 # MMX Rules Guard Plugin
 
-A MiniMax plugin that enforces mandatory safety rules before risky agent actions.
+This plugin enforces MMX's operating rules before the agent runs a risky action.
 
-## What It Does
+## What this plugin does
 
-Before the agent executes any risky action (file delete, shell command, git force-push, admin API call, etc.), this plugin:
+It blocks risky actions until the user explicitly confirms the action and the applicable safety rules.
 
-1. **Identifies** the action and classifies its risk level
-2. **Shows** the applicable safety rules (from your MMX rules repo)
-3. **Requires** explicit user confirmation with "I confirm"
-4. **Blocks** the action if not confirmed
-5. **Verifies** the result after execution
+Risky actions include:
+- shell operations
+- writes and deletes in the workspace
+- git push / force-push / reset / clean operations
+- admin or privilege-changing calls
+- calls that may expose secrets or sensitive data
+- external requests with data or credentials
 
-## Installation
+## Required rules enforced
 
-### Option 1: From Local Directory (Development)
+1. Never expose secrets in source, logs, reports or browser state.
+2. Admin APIs require explicit authentication and permission checks.
+3. Destructive operations require explicit approval.
+4. Use least privilege.
+5. Reality before assumption.
+6. Cause before symptom.
+7. Proof before claim.
+8. No fake done.
+9. Security and data integrity before convenience.
 
-```bash
-# Copy the plugin to your local plugin directory
-cp -r mmx-rules-hook ~/.minimax/plugins/mmx-rules-hook
+## Local marketplace installation
 
-# OR if using a profile:
-cp -r mmx-rules-hook ~/.minimax-<profile>/plugins/mmx-rules-hook
+This repository includes a local marketplace layout so it can be used as a direct plugin source for MiniMax:
 
-# Then in mcode TUI:
-mcode plugin marketplace list  # shows local plugin directory
-# Enable the plugin:
-mcode plugin enable mmx-rules-hook@local
+```text
+marketplace/
+  mmx-rules-hook/
+    .minimax-plugin/
+    hooks/
+    skills/
+    rules/
 ```
 
-### Option 2: From This Repository
+To install from the local marketplace, copy the plugin folder into the active local plugin directory used by your MiniMax profile:
 
 ```bash
-# Clone or download this repo
-git clone https://github.com/soniaschu/mmx.git
-cd mmx/mmx-rules-hook
-
-# Copy to your local plugins:
-cp -r . ~/.minimax/plugins/mmx-rules-hook
-
-# Enable in mcode:
-mcode plugin enable mmx-rules-hook@local
+cp -r marketplace/mmx-rules-hook ~/.minimax/plugins/
+# or for a named profile:
+# cp -r marketplace/mmx-rules-hook ~/.minimax-<profile>/plugins/
 ```
 
-## Mandatory Rules Enforced
-
-✅ Never expose secrets in source, logs, reports or browser state  
-✅ Admin APIs require explicit authentication and permission checks  
-✅ Destructive operations require explicit approval  
-✅ Use least privilege  
-✅ Reality before assumption  
-✅ Cause before symptom  
-✅ Proof before claim  
-✅ No fake done  
-✅ Security and data integrity before convenience  
-
-## How to Use
-
-### In mcode TUI
-
-1. Open `/plugins` in mcode
-2. Search for "mmx-rules-hook"
-3. Enable it with `Space`
-4. When you ask the agent to do something risky:
-   - The plugin will show the applicable rules
-   - You'll see a confirmation prompt
-   - Type "I confirm" to proceed
-   - Type anything else or timeout to cancel
-
-### Via CLI
+Then enable it in the TUI:
 
 ```bash
-# List available plugins
 mcode plugin list --available --marketplace local
-
-# Enable the plugin
 mcode plugin enable mmx-rules-hook@local
-
-# Disable the plugin
-mcode plugin disable mmx-rules-hook@local
-
-# Remove the plugin
-mcode plugin remove mmx-rules-hook@local
 ```
 
-## Covered Actions
+## Manual install
 
-- 🔴 **Shell execution** (npm, bash, python, etc.)
-- 🔴 **File operations** (create, write, delete)
-- 🔴 **Git operations** (push, force-push, rebase)
-- 🔴 **Admin API calls** (permissions, config changes)
-- 🔴 **External requests** (API calls to external services)
-- 🔴 **Destructive operations** (delete, overwrite)
-
-## Example Workflow
-
+```bash
+cp -r mmx-rules-hook ~/.minimax/plugins/
+mcode plugin enable mmx-rules-hook@local
 ```
-You: "Delete all .log files in the temp directory"
 
-[mcode agent analyzes the action]
+## Confirm flow
 
-⚠️  Risky Action Requires Confirmation
+When a risky command is about to run, the plugin shows a prompt like:
 
-Action: Delete files matching 'temp/**/*.log' (12 files, ~50MB)
-Risk Level: HIGH
+```text
+⚠️ MMX confirmation gate
 
-Applicable Rules:
+Action: Delete temp logs
+Risk: high
+
+Applicable rules:
 - Destructive operations require explicit approval.
-- Use least privilege.
 - Proof before claim.
-
-Files to delete:
-  temp/logs/app.2026-10-01.log (15MB)
-  temp/logs/app.2026-10-02.log (18MB)
-  temp/logs/system.log (17MB)
-  [9 more files]
+- Security and data integrity before convenience.
 
 To proceed, type: I confirm
 ```
 
-You type: `I confirm`
+If the user does not type exactly `I confirm`, the action stops.
 
-```
-✅ Confirmed. Deleting files...
-[actual deletion happens]
-✅ Verification: Deleted 12 files, freed 50.2MB
-```
+## Rule files
 
-## Project Alignment
+The rule set is split into dedicated files so each rule is explicit and reviewable:
+- `rules/01-security.md`
+- `rules/02-admin-and-permissions.md`
+- `rules/03-destructive-operations.md`
+- `rules/04-least-privilege.md`
+- `rules/05-reality-before-assumption.md`
+- `rules/06-proof-before-claim.md`
+- `rules/07-no-fake-done.md`
+- `rules/08-safety-before-convenience.md`
 
-This plugin enforces rules from your MMX governance rules:
+## Alignment with MMX repo rules
 
-- `00-core.mdc` - Work from actual project state
-- `00-mody-contract.md` - Reality before assumption, proof before claim
-- `01-autonomous-development.md` - Self-sufficient loops with verification
-- `05-security.mdc` - Never expose secrets, require approval
-- `02-no-fake-done.mdc` - No completion without verification
-
-## License
-
-MIT (or your chosen license)
-
-## Author
-
-soniaschu
+This plugin is built from the governing principles in your MMX repository:
+- `00-core.mdc`
+- `00-mody-contract.md`
+- `01-autonomous-development.md`
+- `02-no-fake-done.mdc`
+- `05-security.mdc`

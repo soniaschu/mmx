@@ -3,62 +3,81 @@
   "id": "mmx-pre-action-confirmation",
   "event": "before_tool_call",
   "trigger": {
-    "toolNames": ["shell", "file_write", "file_delete", "git_push", "git_force_push", "admin_api_call", "external_request"],
+    "toolNames": [
+      "shell",
+      "file_write",
+      "file_delete",
+      "git_push",
+      "git_force_push",
+      "git_clean",
+      "admin_api_call",
+      "external_request",
+      "network_call"
+    ],
     "riskLevel": ["high", "critical"]
   },
-  "mode": "synchronous",
-  "title": "⚠️ Confirmation Required Before Risky Action",
-  "description": "This action may have security or data integrity implications. Review the mandatory rules below and confirm you understand them.",
+  "mode": "blocking",
+  "title": "⚠️ MMX confirmation gate",
+  "description": "This action is safety-sensitive. Review the rules below and confirm before continuing.",
   "requiredApproval": {
     "confirmationRequired": true,
     "confirmationPhrase": "I confirm",
-    "blockOnDeny": true
+    "blockOnDeny": true,
+    "timeoutSeconds": 300
   },
   "rules": [
     {
-      "id": "never-expose-secrets",
+      "id": "secret-protection",
+      "title": "Never expose secrets",
       "text": "Never expose secrets in source, logs, reports or browser state.",
-      "applies_to": ["file_write", "external_request", "shell"]
+      "source": "rules/01-security.md"
     },
     {
-      "id": "admin-auth-required",
-      "text": "Admin APIs require explicit authentication and permission checks. Verify credentials and scope before proceeding.",
-      "applies_to": ["admin_api_call"]
+      "id": "admin-auth",
+      "title": "Admin APIs require explicit checks",
+      "text": "Admin APIs require explicit authentication and permission checks.",
+      "source": "rules/02-admin-and-permissions.md"
     },
     {
       "id": "destructive-approval",
-      "text": "Destructive operations require explicit approval. Verify the impact before confirming.",
-      "applies_to": ["file_delete", "git_force_push", "shell"]
+      "title": "Destructive operations require explicit approval",
+      "text": "Destructive operations require explicit approval.",
+      "source": "rules/03-destructive-operations.md"
     },
     {
       "id": "least-privilege",
-      "text": "Use least privilege. Use the minimal permissions and scope necessary for the operation.",
-      "applies_to": ["admin_api_call", "shell"]
+      "title": "Use least privilege",
+      "text": "Use least privilege and the smallest tool scope possible.",
+      "source": "rules/04-least-privilege.md"
     },
     {
       "id": "reality-before-assumption",
-      "text": "Reality before assumption. Verify the actual state before making changes. Do not invent files, tests, results, or success.",
-      "applies_to": ["file_write", "shell"]
+      "title": "Reality before assumption",
+      "text": "Work from the actual project state and verify real conditions before changing them.",
+      "source": "rules/05-reality-before-assumption.md"
     },
     {
       "id": "proof-before-claim",
-      "text": "Proof before claim. Verify results with actual output, not assumptions.",
-      "applies_to": ["shell", "git_push"]
+      "title": "Proof before claim",
+      "text": "Proof before claim: do not present an outcome as successful without validation output.",
+      "source": "rules/06-proof-before-claim.md"
     },
     {
       "id": "no-fake-done",
-      "text": "No fake done. Completion without sufficient verification is not a real result.",
-      "applies_to": ["shell", "file_write"]
+      "title": "No fake done",
+      "text": "A task is not complete without actual evidence and verification.",
+      "source": "rules/07-no-fake-done.md"
     },
     {
-      "id": "safety-first",
-      "text": "Security and data integrity before convenience. Do not skip safety checks for speed.",
-      "applies_to": ["file_delete", "git_force_push", "admin_api_call", "external_request"]
+      "id": "safety-before-convenience",
+      "title": "Safety before convenience",
+      "text": "Security and data integrity come before speed or convenience.",
+      "source": "rules/08-safety-before-convenience.md"
     }
   ],
   "systemMessage": {
-    "title": "Rules Acknowledgment Required",
-    "content": "By confirming, you acknowledge that you have read and understood the rules above, and commit to following them for this action.",
+    "title": "Rules acknowledgment required",
+    "content": "By confirming, you acknowledge the MMX rules above and agree to proceed only with the minimum safe action after verification.",
     "severity": "warning"
   }
 }

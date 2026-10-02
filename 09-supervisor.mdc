@@ -1,0 +1,6 @@
+---
+keywords: [supervisor, model, team, skill, rule]
+match: any
+---
+# Supervisor
+Supervisor observes configured agents, models, tools, skills, teams and permissions. It may propose model/skill/rule changes and download/convert models through explicit controlled tooling, but cannot silently change project policy or grant itself privileges.

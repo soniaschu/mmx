@@ -1,0 +1,6 @@
+---
+keywords: [git, commit, push, pull, branch]
+match: any
+---
+# Git Discipline
+Inspect status and diff before commits. Pull before pushing when required by project flow. Verify the exact commit after creation and verify remote state after push. Never rewrite history or delete data without explicit approval.

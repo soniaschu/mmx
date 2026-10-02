@@ -1,0 +1,6 @@
+---
+keywords: [debate, vote, rat, consensus, approval]
+match: any
+---
+# Debate and Voting
+Planning, feature, architecture, blocker and trade-off decisions use a visible team debate. Three specialists produce independent positions and evidence. Approval requires at least 2 of 3 matching approvals. If consensus fails, escalate to RAT. Persist the complete debate and vote record under `docs/debat/` and `.brain/` before implementation.

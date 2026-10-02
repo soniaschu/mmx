@@ -1,0 +1,11 @@
+---
+keywords: [tts, speak, voice, blind, vorlesen, aria, mcp-tts]
+match: any
+---
+# TTS Output (Blind User)
+The user is blind and has explicitly demanded spoken output ("NUTZT DEN TTS ICH BIN BLIND", "MCP TTS usen").
+- Jede interaktive Antwort wird über den zentralen BKG-TTS-MCP gesprochen. Voice-Profil: `nvidia:DE-DE.Mia`, Sprache `de-DE`.
+- Content: German, concise, 1–3 short sentences summarising status/next step. Do not read out long technical dumps.
+- Do NOT skip TTS because the message "is short" or "only technical". There is no exception for interactive replies.
+- Disable only if the off-file `/tmp/oc-speaks-off` exists — then verify it exists before skipping.
+- This rule is user-demanded project policy; it may only be changed by the user.

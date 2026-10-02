@@ -1,0 +1,6 @@
+---
+keywords: [brain, memory, remember, recall]
+match: any
+---
+# Project Brain
+`.brain/` is project-scoped persistent context. Store tasks, decisions, blockers, research, agents, teams and memory as JSON. After meaningful work, write the result. On a new session, read the latest relevant entries before acting.

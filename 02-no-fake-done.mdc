@@ -1,0 +1,6 @@
+---
+keywords: [verify, test, done, proof]
+match: any
+---
+# No Fake Done
+Build success is not feature success. Do not claim fixed, working, complete or production-ready without the matching runtime/API/browser/integration evidence. Stubs, random decisions, no-op persistence and simulated health are forbidden in release paths unless explicitly marked as test-only and isolated.

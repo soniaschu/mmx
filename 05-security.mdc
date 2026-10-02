@@ -1,0 +1,6 @@
+---
+keywords: [security, secret, token, permission, api-key]
+match: any
+---
+# Security
+Never expose secrets in source, logs, reports or browser state. Admin APIs require explicit authentication and permission checks. Destructive operations require explicit approval. Use least privilege for agents and tools.

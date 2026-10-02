@@ -1,0 +1,6 @@
+---
+keywords: [task, agent, delegation, worker]
+match: any
+---
+# Task Ownership
+Before work starts, create or claim a record in `.brain/tasks.json`. Record agent, model, tools, skills, start time and scope. On completion record status, changed files, commands run and real verification. Blocked work must record the blocker and escalation path.

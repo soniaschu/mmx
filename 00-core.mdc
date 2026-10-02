@@ -1,0 +1,6 @@
+---
+keywords: [bkg, production, task, agent]
+match: any
+---
+# BKG Core
+Work from the actual project state. Never invent requirements, tests, files, results, or success. Preserve existing work unless a real contradiction is proven. Treat new requirements as deltas. Every implementation task must have an owner, task id, status, verification evidence, and memory entry.

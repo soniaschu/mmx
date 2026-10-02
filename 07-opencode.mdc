@@ -1,0 +1,6 @@
+---
+keywords: [opencode, acp, permission, skill, tool, command]
+match: any
+---
+# OpenCode Integration
+Use current OpenCode configuration concepts: agents, skills, tools, commands, permissions, policies and ACP. Keep client-specific details out of agent logic. Project-local configuration links to the global BKG pack rather than duplicating files.

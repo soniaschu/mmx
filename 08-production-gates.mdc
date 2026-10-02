@@ -1,0 +1,6 @@
+---
+keywords: [production, release, ci, deployment, monitoring]
+match: any
+---
+# Production Gates
+Security, reliability, performance, deployment, documentation, configuration, monitoring and migration/rollback safety are release gates. CI must run tests, typecheck, build and packaging checks. Release artifacts must have a synchronized lockfile and reproducible installation.

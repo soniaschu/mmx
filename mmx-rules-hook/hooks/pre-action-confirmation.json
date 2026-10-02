@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schemas.minimax.ai/hooks/1.0/hook-manifest",
+  "id": "mmx-pre-action-confirmation",
+  "event": "before_tool_call",
+  "trigger": {
+    "toolNames": ["shell", "file_write", "file_delete", "git_push", "git_force_push", "admin_api_call", "external_request"],
+    "riskLevel": ["high", "critical"]
+  },
+  "mode": "synchronous",
+  "title": "⚠️ Confirmation Required Before Risky Action",
+  "description": "This action may have security or data integrity implications. Review the mandatory rules below and confirm you understand them.",
+  "requiredApproval": {
+    "confirmationRequired": true,
+    "confirmationPhrase": "I confirm",
+    "blockOnDeny": true
+  },
+  "rules": [
+    {
+      "id": "never-expose-secrets",
+      "text": "Never expose secrets in source, logs, reports or browser state.",
+      "applies_to": ["file_write", "external_request", "shell"]
+    },
+    {
+      "id": "admin-auth-required",
+      "text": "Admin APIs require explicit authentication and permission checks. Verify credentials and scope before proceeding.",
+      "applies_to": ["admin_api_call"]
+    },
+    {
+      "id": "destructive-approval",
+      "text": "Destructive operations require explicit approval. Verify the impact before confirming.",
+      "applies_to": ["file_delete", "git_force_push", "shell"]
+    },
+    {
+      "id": "least-privilege",
+      "text": "Use least privilege. Use the minimal permissions and scope necessary for the operation.",
+      "applies_to": ["admin_api_call", "shell"]
+    },
+    {
+      "id": "reality-before-assumption",
+      "text": "Reality before assumption. Verify the actual state before making changes. Do not invent files, tests, results, or success.",
+      "applies_to": ["file_write", "shell"]
+    },
+    {
+      "id": "proof-before-claim",
+      "text": "Proof before claim. Verify results with actual output, not assumptions.",
+      "applies_to": ["shell", "git_push"]
+    },
+    {
+      "id": "no-fake-done",
+      "text": "No fake done. Completion without sufficient verification is not a real result.",
+      "applies_to": ["shell", "file_write"]
+    },
+    {
+      "id": "safety-first",
+      "text": "Security and data integrity before convenience. Do not skip safety checks for speed.",
+      "applies_to": ["file_delete", "git_force_push", "admin_api_call", "external_request"]
+    }
+  ],
+  "systemMessage": {
+    "title": "Rules Acknowledgment Required",
+    "content": "By confirming, you acknowledge that you have read and understood the rules above, and commit to following them for this action.",
+    "severity": "warning"
+  }
+}

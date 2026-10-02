@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.minimax.ai/plugins/1.0/plugin-manifest",
+  "schemaVersion": "1.0",
+  "name": "mmx-rules-hook",
+  "displayName": "MMX Rules Guard",
+  "version": "0.1.0",
+  "description": "Shows required safety rules before risky agent actions and requires explicit confirmation. Enforces MMX engineering principles.",
+  "author": "soniaschu",
+  "category": "productivity",
+  "skills": [
+    {
+      "path": "skills/confirm-before-action/SKILL.md"
+    }
+  ],
+  "hooks": [
+    {
+      "path": "hooks/pre-action-confirmation.json"
+    }
+  ]
+}

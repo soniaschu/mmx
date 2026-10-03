@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.minimax.ai/plugins/1.0/plugin-manifest",
+  "schemaVersion": "1.0",
+  "name": "mmx-rules-hook",
+  "displayName": "MMX Rules Guard",
+  "version": "0.2.0",
+  "description": "Enforces MMX safety and verification rules before risky agent actions. Requires an explicit confirmation before destructive, privileged, or security-relevant operations.",
+  "author": "soniaschu",
+  "category": "safety",
+  "exampleQueries": [
+    "Delete the temp logs folder",
+    "Run a destructive git command",
+    "Call the admin API"
+  ],
+  "skills": [
+    {
+      "path": "skills/confirm-before-action/SKILL.md"
+    }
+  ],
+  "hooks": [
+    {
+      "path": "hooks/pre-action-confirmation.json"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://schemas.minimax.ai/hooks/1.0/hook-manifest",
+  "id": "mmx-pre-action-confirmation",
+  "event": "before_tool_call",
+  "trigger": {
+    "toolNames": [
+      "shell",
+      "file_write",
+      "file_delete",
+      "git_push",
+      "git_force_push",
+      "git_clean",
+      "admin_api_call",
+      "external_request",
+      "network_call"
+    ],
+    "riskLevel": ["high", "critical"]
+  },
+  "mode": "blocking",
+  "title": "⚠️ MMX confirmation gate",
+  "description": "This action is safety-sensitive. Review the rules below and confirm before continuing.",
+  "requiredApproval": {
+    "confirmationRequired": true,
+    "confirmationPhrase": "I confirm",
+    "blockOnDeny": true,
+    "timeoutSeconds": 300
+  },
+  "rules": [
+    {
+      "id": "secret-protection",
+      "title": "Never expose secrets",
+      "text": "Never expose secrets in source, logs, reports or browser state.",
+      "source": "rules/01-security.md"
+    },
+    {
+      "id": "admin-auth",
+      "title": "Admin APIs require explicit checks",
+      "text": "Admin APIs require explicit authentication and permission checks.",
+      "source": "rules/02-admin-and-permissions.md"
+    },
+    {
+      "id": "destructive-approval",
+      "title": "Destructive operations require explicit approval",
+      "text": "Destructive operations require explicit approval.",
+      "source": "rules/03-destructive-operations.md"
+    },
+    {
+      "id": "least-privilege",
+      "title": "Use least privilege",
+      "text": "Use least privilege and the smallest tool scope possible.",
+      "source": "rules/04-least-privilege.md"
+    },
+    {
+      "id": "reality-before-assumption",
+      "title": "Reality before assumption",
+      "text": "Work from the actual project state and verify real conditions before changing them.",
+      "source": "rules/05-reality-before-assumption.md"
+    },
+    {
+      "id": "proof-before-claim",
+      "title": "Proof before claim",
+      "text": "Proof before claim: do not present an outcome as successful without validation output.",
+      "source": "rules/06-proof-before-claim.md"
+    },
+    {
+      "id": "no-fake-done",
+      "title": "No fake done",
+      "text": "A task is not complete without actual evidence and verification.",
+      "source": "rules/07-no-fake-done.md"
+    },
+    {
+      "id": "safety-before-convenience",
+      "title": "Safety before convenience",
+      "text": "Security and data integrity come before speed or convenience.",
+      "source": "rules/08-safety-before-convenience.md"
+    }
+  ],
+  "systemMessage": {
+    "title": "Rules acknowledgment required",
+    "content": "By confirming, you acknowledge the MMX rules above and agree to proceed only with the minimum safe action after verification.",
+    "severity": "warning"
+  }
+}
